@@ -40,6 +40,8 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'treebeard',
+    'rest_framework',
+
     'apps.core',
 ]
 
@@ -122,3 +124,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Django REST Framework settings
+# http://www.django-rest-framework.org
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+}
+
+# Custom settings for DEBUG=True
+if DEBUG:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] += (
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    )

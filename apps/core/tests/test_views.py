@@ -1,8 +1,10 @@
 import pytest
 
-from apps.core.models import Article
+from apps.core.models import Article, Category
 from . import factories
 
+
+# Article CRUD tests
 
 @pytest.mark.django_db
 def test_create_article(authenticated_client, root_categories):
@@ -13,6 +15,7 @@ def test_create_article(authenticated_client, root_categories):
         'name': article.name,
         'stock': article.stock,
         'price': article.price,
+        'categories': [_.pk for _ in root_categories],
     }
     response = authenticated_client.post('/api/articles/', data)
     assert response.status_code == 201
@@ -55,3 +58,49 @@ def test_delete_article(authenticated_client, article):
 def test_unauthorized_api_call(client, articles):
     response = client.get('/api/articles/')
     assert response.status_code == 401
+
+
+# Category CRUD tests
+
+@pytest.mark.django_db
+def test_create_category(authenticated_client, root_category):
+    requests_data = [
+        {
+            'name': 'Category',
+        },
+        {
+            'parent': root_category.pk,
+            'name': 'Sub Category',
+        },
+    ]
+    for data in requests_data:
+        response = authenticated_client.post('/api/categories/', data)
+        assert response.status_code == 201
+        last_inserted_category = response.json()
+        assert last_inserted_category.get('name') == data.get('name')
+
+
+@pytest.mark.django_db
+def test_list_categories(authenticated_client, root_categories):
+    expected_amount = len(root_categories)
+    response = authenticated_client.get('/api/categories/')
+    assert response.status_code == 200
+    amount = len(response.json())
+    assert expected_amount == amount
+
+
+@pytest.mark.django_db
+def test_get_category(authenticated_client, root_category):
+    response = authenticated_client.get('/api/categories/%s/' % root_category.id)
+    assert response.status_code == 200
+    json_response = response.json()
+    assert root_category.id == json_response.get('id')
+
+
+@pytest.mark.django_db
+def test_delete_article(authenticated_client, root_category):
+    response = authenticated_client.delete('/api/categories/%s/' % root_category.id)
+    assert response.status_code == 204
+    invalid_id = 'invalid'
+    response = authenticated_client.delete('/api/categories/%s/' % invalid_id)
+    assert response.status_code == 404

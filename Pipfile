@@ -8,6 +8,7 @@ Django = "*"
 djangorestframework = "*"
 python-decouple = "*"
 django-treebeard = "*"
+django-extensions = "*"
 
 [dev-packages]
 coverage = "*"
@@ -18,7 +19,6 @@ pytest = "*"
 pytest-django = "*"
 pytest-watch = "*"
 werkzeug = "*"
-django-extensions = "*"
 
 [requires]
 python_version = "3.6"

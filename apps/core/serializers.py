@@ -10,16 +10,24 @@ class ArticleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'name',)
+
+
 class CategorySerializer(serializers.ModelSerializer):
-    parent = serializers.CharField(required=False)
+    parent = serializers.IntegerField(label='Parent ID', required=False, source='get_parent.id')
+    parent_name = serializers.CharField(read_only=True, required=False, source='get_parent.name')
+    children = SubCategorySerializer(source='get_children', many=True)
 
     class Meta:
         model = Category
-        exclude = ('path', 'depth', 'numchild',)
+        fields = ('id', 'name', 'parent', 'parent_name', 'children',)
 
     def validate_parent(self, value):
         try:
-            return Category.objects.get(pk=value)
+            return Category.objects.get(pk=value).pk
         except Category.DoesNotExist:
             raise serializers.ValidationError('Parent category does exist.')
 

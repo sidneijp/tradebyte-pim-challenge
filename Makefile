@@ -1,4 +1,5 @@
 SHELL:=/bin/bash
+PYTHON=`pipenv --venv`
 MANAGE:=`pipenv --venv`/bin/python manage.py
 
 requirements:
@@ -23,16 +24,16 @@ shell:
 	$(MANAGE) shell
 
 test:
-	py.test
+	$(PYTHON)/bin/py.test
 
 testd:
-	ptw
+	$(PYTHON)/bin/ptw
 
 coverage:
-	coverage run -m py.test
+	$(PYTHON)/coverage run -m py.test
 
 report:
-	coverage report
+	$(PYTHON)/coverage report
 
 html:
 	@coverage html

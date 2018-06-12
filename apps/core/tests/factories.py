@@ -8,7 +8,7 @@ class ArticleFactory(factory.django.DjangoModelFactory):
     sku = factory.Sequence(lambda n: 'TST-FAC-ART-%s' % n)
     ean = factory.Faker('ean13')
     stock = factory.Sequence(lambda n: n)
-    price = factory.Sequence(lambda n: n + 0.111)
+    price = factory.Sequence(lambda n: n + 0.11)
 
     class Meta:
         model = Article
